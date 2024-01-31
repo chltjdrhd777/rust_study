@@ -121,3 +121,60 @@ pub fn chapter5_2() {
         dimensions.length * dimensions.width
     }
 }
+
+pub fn chater5_3() {
+    // 메소드 구현에 대해서
+    // 러스트는 구현체(impl)에 메소드를 정의할 때 구현체를 따로 작성하는 방식으로 만든다
+    // (특이하게도, 자바스크립트의 구현체와는 다르게 여기는 확장의 개념에 가깝다.)
+
+    // 메소드의 인자로 처음 오는 것은 무조건 self(javascript로 따지면 this 이다.)
+    // 클래스에서 메소드 구현할 때의 형태를 기억해보자.
+    // 주의할 점은, self에 대해서 소유권을 빌리는 형태로 가져갈 경우 만들어질 인스턴스에 대한 read-only이며
+    // &mut 을 사용해서 self를 참조할 경우, 해당 메소드 호출결과가 객체의 변경까지 이어질 수 있음을 이해해야 한다.
+
+    // 또한 인스턴스 내의 메서드를 호출할 경우, 러스트는 스마트하게 "자동 참조" 를 하여 호출을 진행한다.
+    // 예를 들어, p1.distance(&p2); 라고 한다면
+    // 사실 이것은 자동적으로 p1의 소유권을 빌린 뒤, 메서드를 호출하는 것과 같다.
+    // 즉, (&p1).distance(&p2) 와 동일하다.
+
+    #[derive(Debug)]
+    struct Rectangle {
+        length: u32,
+        width: u32,
+    }
+    impl Rectangle {
+        fn area(&mut self) -> u32 {
+            self.width * self.length
+        }
+        fn can_hold(&self, other: &Rectangle) -> bool {
+            self.length > other.length && self.width > other.width
+        }
+        fn associated_function(size: u32) -> Rectangle {
+            Rectangle {
+                length: size,
+                width: size,
+            }
+        }
+    }
+
+    let rect1 = Rectangle {
+        length: 50,
+        width: 40,
+    };
+    let rect2 = Rectangle {
+        length: 40,
+        width: 30,
+    };
+
+    // 아래에서 볼 수 있는 것처럼, self는 호출 당시에 args의 자리에 차지하지 않는다.
+    // 인자로 들어가면 자동으로 2번째에 들어가게 되는 것이다.
+    println!("Check the holding {}", rect1.can_hold(&rect2));
+
+    // impl에 구현되는 함수 가운데 &self를 인자로 받지 않는 함수를 연관함수라고 부른다.
+    // 해당 연관함수는 보통 구조체의 인스턴스를 반환하는 생성자로 자주 사용된다
+    // 메소드가 아니라 함수이고, &self를 받지 않기 때문에 해당 구조체와 함께 동작할 인스턴스를 참조하지 않는다.
+    // 따라서 사용을 할 때에도 :: 문법을 사용해야 한다.
+    // 이는 자바스크립트의 static 메소드와 매우 유사하다.
+
+    let rect3 = Rectangle::associated_function(100);
+}
