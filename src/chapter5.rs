@@ -75,3 +75,49 @@ pub fn chapter5() {
     let tuple_color = Color(0, 0, 1);
     println!("tuplecolor is {:?}", tuple_color.2);
 }
+
+pub fn chapter5_2() {
+    // 튜플 구조체 : 자바스크립트에서 인자를 하나하나 정하기보다, 객체로 한번에 전달하는 것이 편한 것처럼
+    // rust에서는 튜플 형태로 parameter을 구성하는 것이 가능하다.
+    let dimensions = (50, 30);
+
+    let area = get_area(dimensions);
+
+    println!("area is {}", area);
+
+    fn get_area(dimensions: (u32, u32)) -> u32 {
+        dimensions.0 * dimensions.1
+    }
+
+    //보통은 parameter을 정의할 경우 구조체를 사용하는 것이 훨씬 직관적이다.
+    //해당 방식은 타입스크립트의 인터페이스와 매우 흡사하다.
+    //튜플때와 다르게, 명확하게 dimensions의 어떤 property를 사용하려는 것인지 나타내는 것을 보길 바란다.
+
+    //중요! parameter을 객체 구조체 형태로 정의할 때에는, 습관적으로 "&" 를 이용해서 소유권을 빌리길 권장한다.
+    //자바스크립트때와 다르게, 그냥 소유권을 넘겨버릴 경우 해당 객체를 다시 사용할 수 없기 때문이다.(함수 리턴으로 다시 내보내는게 아닌 이상)
+    //참고로, 러스트는 구조체로 생성된 인스턴스를 그대로 콘솔을 찍으려면 에러를 낸다
+    //따라서 struct에 debug trait 어노테이션을 추가해줘야하며, 콘솔의 부분에는 ":?" 를 사용줘야 한다.
+    //중요한 것은 해당 작업은 어디까지나 구조체로 초기화된 인스턴스를 그대로 콘솔을 찍으려 할 때에 발생하는 문제다.
+    //그것이 아래에 콘솔을 찍을 때 :? 없이 area_2를 콘솔 찍을 수 있었던 이유다.
+
+    //그리고, 사소하지만 :#? 를 이용해서 예쁘게 프린트가 되는것도 가능하니 인스턴스를 콘솔 찍으려면 되도록이면 이것을 이용하자.
+    #[derive(Debug)]
+    struct Rectangle {
+        length: u32,
+        width: u32,
+    }
+
+    let dimensions_2 = Rectangle {
+        length: 50,
+        width: 30,
+    };
+
+    let area_2 = get_area_2(&dimensions_2);
+
+    println!("dimensions_2 is {:#?}", dimensions_2);
+    println!("area_2 is {}", area_2);
+
+    fn get_area_2(dimensions: &Rectangle) -> u32 {
+        dimensions.length * dimensions.width
+    }
+}
